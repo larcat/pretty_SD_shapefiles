@@ -1,0 +1,139 @@
+---
+title: "Packages tigris and ACS and plotting school district data."
+output: html_document
+---
+R provides easy to use packages that wrap the census TIGER shapefile database and the census American Community Survey database. Because of this, it is easy to plot reasonable maps in R of descriptive statistics at the district level for a given state.
+
+Furthermore, with a little bit of object hacking, you can create a geojson file useable in Tableau for your own purposes.
+```{r needed_libs, message=FALSE}
+library(rgdal) # Used for outputting geojson files, and a dependency for tigris
+library(tigris) # Intertface for the TIGER database
+library(acs) # Interface for the ACS API
+library(rgeos) # For cropping
+library(raster) # For cropping
+library(rgdal) # For outputting geoJSON -- Not actually executed in RMD
+
+```
+You will need to request an API key from the census bureau for ACS API integration at:
+
+  http://api.census.gov/data/key_signup.html
+
+# Downloading School District Shapefiles
+
+To download school district shapefiles we use the
+```{r, eval = FALSE}
+school_districts()
+```
+function from tigris.
+
+Two arguments are required: State, which takes 2-letter state abbreviations, and type
+
+Three kinds of school district shapefiles exist in TIGER:
+
+* Unified districts (type = "unified")
+* Elementary districts (type = "elementary")
+* Secondary districts (type = "secondary")
+
+To get a basic unified district shapefile for Mass.:
+```{r basic_district, messages = FALSE}
+MA_unified <- school_districts(state = "MA",
+                               type = "unified")
+```
+
+# Hacking school district shapefiles together.
+If you plot the unified districts, you won't get what you expect, exactly:
+
+```{r unified_plot}
+plot(MA_unified)
+```
+
+We will need to bring in the secondary and elementary districts to get the expected plot.
+```{r sec_elem, messages = FALSE}
+MA_secondary <- school_districts(state = "MA",
+                                 type = "secondary")
+
+MA_elementary <- school_districts(state = "MA",
+                                  type = "elementary")
+plot(MA_secondary)
+plot(MA_elementary)
+```
+
+Sadly, for the time being, the built-in tigris function
+```{r, eval = FALSE}
+rbind_tigris()
+```
+to handle shapefile merging doesn't work with multiple tigris shapefile types, which different districts technically are (there is a pull request in to change this.)
+```{r no_rbind_tigris, error = TRUE}
+test <- rbind_tigris(MA_elementary, MA_secondary)
+```
+For the time being, we can hack around this by:
+
+  1. Changing the tigris attribute for each shape file object.
+  2. Renaming the "SDLEA"" columns for tigris_dataframe@data.
+```{r hack_tigris}
+attr(MA_unified, "tigris") <- "sdall"
+attr(MA_secondary, "tigris") <- "sdall"
+attr(MA_elementary, "tigris") <- "sdall"
+
+names(MA_unified@data)[2] <- "SDLEA"
+names(MA_secondary@data)[2] <- "SDLEA"
+names(MA_elementary@data)[2] <- "SDLEA"
+
+MA_all_sd <- rbind_tigris(MA_unified,
+                          MA_secondary,
+                          MA_elementary)
+
+plot(MA_all_sd)
+```
+Still not quite there -- There's those polygons over water.
+Peeking inside the @data gives a clue and we have a way to remove those polygons.
+```{r remove water}
+names(MA_all_sd@data)
+                
+# Any with no LAND area?
+MA_all_sd@data[which(MA_all_sd@data$ALAND == "0"), ]
+
+# Remove them.
+MA_all_sd <- MA_all_sd[which(MA_all_sd@data$ALAND != "0"), ]
+
+plot(MA_all_sd)
+```
+Still not quite there.
+
+A county shapefile from tigris using the catrographic boundaries (cb=TRUE) to crop down to the land will result in what we want.
+Cartographic boundaries isn't callable on school districts, but for areas that it is, it gives outlines without land.
+```{r, message = FALSE}
+outline <- counties(state = "MA",
+                    cb = TRUE, 
+                    resolution = "500k", 
+                    detailed = TRUE)
+
+MA_all_sd_land <- intersect(MA_all_sd, outline)
+
+plot(MA_all_sd_land)
+```
+
+@Data is maintained:
+
+```{r}
+head(MA_all_sd_land)
+```
+
+Final step before we dump this badboy into Tableau is outputting to geoJSON
+```{r}
+# writeOGR(MA_all_sd_land, "MA_all_sd_land.geojson", layer="MA_all_sd_land", driver="GeoJSON")
+```
+
+Check out: https://public.tableau.com/views/Pretty-fiedMASDs_/Sheet1?:embed=y&:display_count=yes
+
+For the result!
+
+
+Sources:
+  tigris by Dr. Kyle Walker via CRAN (https://cran.r-project.org)
+  
+  Stack Overflow user cengel for the cropping:
+    (https://gis.stackexchange.com/a/173263)
+  
+  For ggplot2 mapping and easier ACS plotting:
+  http://zevross.com/blog/2015/10/14/manipulating-and-mapping-us-census-data-in-r-using-the-acs-tigris-and-leaflet-packages-3/
