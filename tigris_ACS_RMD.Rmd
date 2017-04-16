@@ -102,7 +102,7 @@ Still not quite there.
 
 A county shapefile from tigris using the catrographic boundaries (cb=TRUE) to crop down to the land will result in what we want.
 Cartographic boundaries isn't callable on school districts, but for areas that it is, it gives outlines without land.
-```{r, message = FALSE}
+```{r, messages = FALSE, warning = FALSE}
 outline <- counties(state = "MA",
                     cb = TRUE, 
                     resolution = "500k", 
