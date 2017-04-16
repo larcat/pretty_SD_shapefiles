@@ -192,15 +192,15 @@ plot(MA_all_sd)</code></pre>
 <pre class="r"><code># Any with no LAND area?
 MA_all_sd@data[which(MA_all_sd@data$ALAND == &quot;0&quot;), ]</code></pre>
 <pre><code>##                                     STATEFP SDLEA   GEOID
-## f24662c622ba11e7a66b6be6fa404058208      25 99997 2599997
+## b00050aa22bc11e7965555962d442a2f208      25 99997 2599997
 ##                                                            NAME LSAD
-## f24662c622ba11e7a66b6be6fa404058208 School District Not Defined   00
+## b00050aa22bc11e7965555962d442a2f208 School District Not Defined   00
 ##                                     LOGRADE HIGRADE MTFCC SDTYP FUNCSTAT
-## f24662c622ba11e7a66b6be6fa404058208      PK      12 G5420  &lt;NA&gt;        F
+## b00050aa22bc11e7965555962d442a2f208      PK      12 G5420  &lt;NA&gt;        F
 ##                                     ALAND     AWATER    INTPTLAT
-## f24662c622ba11e7a66b6be6fa404058208     0 4005479391 +41.8843837
+## b00050aa22bc11e7965555962d442a2f208     0 4005479391 +41.8843837
 ##                                         INTPTLON
-## f24662c622ba11e7a66b6be6fa404058208 -070.3594513</code></pre>
+## b00050aa22bc11e7965555962d442a2f208 -070.3594513</code></pre>
 <pre class="r"><code># Remove them.
 MA_all_sd &lt;- MA_all_sd[which(MA_all_sd@data$ALAND != &quot;0&quot;), ]
 
@@ -255,11 +255,11 @@ plot(MA_all_sd_land)</code></pre>
 ## 6 1275669707 870068134</code></pre>
 <p>Final step before we dump this badboy into Tableau is outputting to geoJSON</p>
 <pre class="r"><code># writeOGR(MA_all_sd_land, &quot;MA_all_sd_land.geojson&quot;, layer=&quot;MA_all_sd_land&quot;, driver=&quot;GeoJSON&quot;)</code></pre>
-<p>Check out: <a href="https://public.tableau.com/views/Pretty-fiedMASDs_/Sheet1" class="uri">https://public.tableau.com/views/Pretty-fiedMASDs_/Sheet1</a>?:embed=y&amp;:display_count=yes</p>
-<p>For the result!</p>
-<p>Sources: tigris by Dr. Kyle Walker via CRAN (<a href="https://cran.r-project.org" class="uri">https://cran.r-project.org</a>)</p>
-<p>Stack Overflow user cengel for the cropping: (<a href="https://gis.stackexchange.com/a/173263" class="uri">https://gis.stackexchange.com/a/173263</a>)</p>
-<p>For ggplot2 mapping and easier ACS plotting: <a href="http://zevross.com/blog/2015/10/14/manipulating-and-mapping-us-census-data-in-r-using-the-acs-tigris-and-leaflet-packages-3/" class="uri">http://zevross.com/blog/2015/10/14/manipulating-and-mapping-us-census-data-in-r-using-the-acs-tigris-and-leaflet-packages-3/</a></p>
+<p>Check out <a href="https://public.tableau.com/views/Pretty-fiedMASDs_/Sheet1?:embed=y&amp;:display_count=yes">the geoJSON dumped to Tableau Public</a> for the result!</p>
+<p>Sources</p>
+<p><a href="https://cran.r-project.org">tigris by Dr. Kyle Walker via CRAN</a></p>
+<p><a href="https://gis.stackexchange.com/a/173263">Stack Overflow user cengel for the cropping</a></p>
+<p><a href="http://zevross.com/blog/2015/10/14/manipulating-and-mapping-us-census-data-in-r-using-the-acs-tigris-and-leaflet-packages-3/">For ggplot2 mapping and easier ACS plotting</a></p>
 </div>
 
 

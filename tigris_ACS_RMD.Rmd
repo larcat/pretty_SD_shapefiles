@@ -124,16 +124,14 @@ Final step before we dump this badboy into Tableau is outputting to geoJSON
 # writeOGR(MA_all_sd_land, "MA_all_sd_land.geojson", layer="MA_all_sd_land", driver="GeoJSON")
 ```
 
-Check out: https://public.tableau.com/views/Pretty-fiedMASDs_/Sheet1?:embed=y&:display_count=yes
+Check out
+[the geoJSON dumped to Tableau Public](https://public.tableau.com/views/Pretty-fiedMASDs_/Sheet1?:embed=y&:display_count=yes)
+for the result!
 
-For the result!
+Sources
 
+[tigris by Dr. Kyle Walker via CRAN](https://cran.r-project.org)
 
-Sources:
-  tigris by Dr. Kyle Walker via CRAN (https://cran.r-project.org)
-  
-  Stack Overflow user cengel for the cropping:
-    (https://gis.stackexchange.com/a/173263)
-  
-  For ggplot2 mapping and easier ACS plotting:
-  http://zevross.com/blog/2015/10/14/manipulating-and-mapping-us-census-data-in-r-using-the-acs-tigris-and-leaflet-packages-3/
+[Stack Overflow user cengel for the cropping](https://gis.stackexchange.com/a/173263)
+
+[For ggplot2 mapping and easier ACS plotting](http://zevross.com/blog/2015/10/14/manipulating-and-mapping-us-census-data-in-r-using-the-acs-tigris-and-leaflet-packages-3/)
