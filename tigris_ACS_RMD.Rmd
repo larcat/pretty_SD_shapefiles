@@ -108,7 +108,13 @@ outline <- counties(state = "MA",
                     resolution = "500k", 
                     detailed = TRUE)
 
+outline <- gUnaryUnion(outline)
+
+dim(MA_all_sd)
+
 MA_all_sd_land <- intersect(MA_all_sd, outline)
+
+dim(MA_all_sd_land)
 
 plot(MA_all_sd_land)
 ```
@@ -116,7 +122,7 @@ plot(MA_all_sd_land)
 @Data is maintained:
 
 ```{r}
-head(MA_all_sd_land)
+head(MA_all_sd_land, n = 2)
 ```
 
 Final step before we dump this badboy into Tableau is outputting to geoJSON
